@@ -312,6 +312,13 @@
     }
 
     function makeSvgDataUri(node, width, height) {
+        var glNodes = node.querySelectorAll('[renderer=gl]');
+        var nodesArray = Array.prototype.slice.call(glNodes);
+        nodesArray.forEach((node) => {
+            node.oldOpacity = node.style.opacity;
+            node.style.opacity = 0;
+        });
+
         return Promise.resolve(node)
             .then(function (node) {
                 node.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
@@ -326,6 +333,10 @@
                     foreignObject + '</svg>';
             })
             .then(function (svg) {
+                var nodesArray = Array.prototype.slice.call(glNodes);
+                nodesArray.forEach((node) => {
+                    node.style.opacity = node.oldOpacity;
+            });
                 return 'data:image/svg+xml;charset=utf-8,' + svg;
             });
     }
