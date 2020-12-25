@@ -142,6 +142,11 @@ An object whose properties to be copied to node's style before rendering.
 You might want to check [this reference](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Properties_Reference)
 for JavaScript names of CSS properties.
 
+#### onClone
+
+Callback that receives cloned element so you can change something on a copy before making the screenshot.
+Should return modified clone object back.
+
 #### quality
 
 A number between 0 and 1 indicating image quality (e.g. 0.92 => 92%) of the
