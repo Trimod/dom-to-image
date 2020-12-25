@@ -6,16 +6,11 @@
     var fontFaces = newFontFaces();
     var images = newImages();
 
-    var getScale = function() {
-        return Window.devicePixelRatio || 1;
-    }
-
     var domtoimage = {
         toSvg: toSvg,
         toPng: toPng,
         toJpeg: toJpeg,
         toBlob: toBlob,
-        draw: draw,
         toPixelData: toPixelData,
         impl: {
             fontFaces: fontFaces,
@@ -43,7 +38,7 @@
      * @param {Function} options.onClone - callback that receives clone node so you can change something on a copy before making the screenshot.
      * should return clone object back.
      * @param {Number} options.quality - a Number between 0 and 1 indicating image quality (applicable to JPEG only),
-     defaults to 1.0.
+                defaults to 1.0.
      * @return {Promise} - A promise that is fulfilled with a SVG image data URL
      * */
     function toSvg(node, options) {
@@ -136,22 +131,15 @@
             .then(util.makeImage)
             .then(util.delay(100))
             .then(function (image) {
-                var scale = getScale();
                 var canvas = newCanvas(domNode);
-                var ctx = canvas.getContext('2d');
-                ctx.mozImageSmoothingEnabled = false;
-                ctx.msImageSmoothingEnabled = false;
-                ctx.imageSmoothingEnabled = false;
-                ctx.scale(scale, scale);
-                ctx.drawImage(image, 0, 0);
+                canvas.getContext('2d').drawImage(image, 0, 0);
                 return canvas;
             });
 
         function newCanvas(domNode) {
-            var scale = getScale();
             var canvas = document.createElement('canvas');
-            canvas.width = (options.width || util.width(domNode)) * scale;
-            canvas.height = (options.height || util.height(domNode)) * scale;
+            canvas.width = options.width || util.width(domNode);
+            canvas.height = options.height || util.height(domNode);
 
             if (options.bgcolor) {
                 var ctx = canvas.getContext('2d');
@@ -521,17 +509,13 @@
         function width(node) {
             var leftBorder = px(node, 'border-left-width');
             var rightBorder = px(node, 'border-right-width');
-            var leftMargin = px(node, 'margin-left');
-            var rightMargin = px(node, 'margin-right');
-            return node.scrollWidth + leftBorder + rightBorder + leftMargin + rightMargin;
+            return node.scrollWidth + leftBorder + rightBorder;
         }
 
         function height(node) {
             var topBorder = px(node, 'border-top-width');
             var bottomBorder = px(node, 'border-bottom-width');
-            var topMargin = px(node, 'margin-top');
-            var bottomMargin = px(node, 'margin-bottom');
-            return node.scrollHeight + topBorder + bottomBorder + topMargin + bottomMargin;
+            return node.scrollHeight + topBorder + bottomBorder;
         }
 
         function px(node, styleProperty) {
